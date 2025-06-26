@@ -119,7 +119,7 @@ def preprocess_input(data, ohe, feature_names):
 
 # -------------------- Pages --------------------
 if page == "Home":
-    st.title("🛡️ Credit Card Fraud Detection")
+    st.title("💳 Credit Card Fraud Detection")
     #st.markdown("Predict whether a transaction is fraudulent using a Random Forest model.")
 
     st.header("📝 Enter Transaction Details")
