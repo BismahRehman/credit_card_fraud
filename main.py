@@ -27,7 +27,7 @@ def set_background(image_path):
         unsafe_allow_html=True
     )
 
-set_background("image.jpeg")  # Make sure the image exists in the same folder
+set_background("image.jpeg")  # Ensure the image file exists in your folder
 
 # -------------------- Title --------------------
 st.title("🛡️ Credit Card Fraud Detection")
@@ -96,35 +96,30 @@ def preprocess_input(data, ohe, feature_names):
 # -------------------- Input Form --------------------
 st.header("📝 Enter Transaction Details")
 with st.form("transaction_form"):
-    trans_date = st.date_input("Select Transaction Date", value=None)
-
-
-    trans_time = st.time_input("Select Transaction Time", value=datetime.time(12, 0))
-
-    amt = st.number_input("Transaction Amount ($)", min_value=0.0, value=0.0, step=1.0, format="%.2f")
-
-
+    trans_date = st.date_input("Transaction Date", value=None)
+    trans_time = st.time_input("Transaction Time", value=None)
+    amt = st.number_input("Transaction Amount ($)", min_value=0.0, value=0.0, step=0.01)
     gender = st.selectbox("Gender", options=["Select"] + sorted(df['gender'].dropna().unique()))
     city = st.selectbox("City", options=["Select"] + sorted(df['city'].dropna().unique()))
     state = st.selectbox("State", options=["Select"] + sorted(df['state'].dropna().unique()))
     type_of_card = st.selectbox("Type of Card", options=["Select"] + sorted(df['Type of Card'].dropna().unique()))
-    day_of_week = st.selectbox("Day of Week", options=["Select"] + sorted(df['Day of Week'].dropna().unique()))
     type_of_transaction = st.selectbox("Type of Transaction", options=["Select"] + sorted(df['Type of Transaction'].dropna().unique()))
     category = st.selectbox("Transaction Category", options=["Select"] + sorted(df['category'].dropna().unique()))
     job = st.selectbox("Job", options=["Select"] + sorted(df['job'].dropna().unique()))
-
     submitted = st.form_submit_button("🎯 Predict Fraud")
 
 # -------------------- Prediction --------------------
 if submitted:
-    if "Select" in [gender, city, state, type_of_card, day_of_week, type_of_transaction, category, job]:
+    if "Select" in [gender, city, state, type_of_card, type_of_transaction, category, job]:
         st.warning("⚠️ Please fill in all fields before submitting.")
     else:
         try:
             trans_date_time = pd.to_datetime(f"{trans_date} {trans_time}")
+            day_of_week = trans_date_time.day_name()  # ✅ Auto-detect day
+
             input_data = {
                 'trans_date_trans_time': trans_date_time,
-                'amt': amt,
+                'amt': float(amt),
                 'Time': trans_date_time.hour,
                 'gender': gender,
                 'city': city,
@@ -147,5 +142,6 @@ if submitted:
                         "✅ Non-Fraudulent Transaction is predicted."
                     )
                     st.markdown(f'<div class="prediction-box {result_class}">{result_text}</div>', unsafe_allow_html=True)
+
         except Exception as e:
             st.error(f"Prediction Error: {str(e)}")
