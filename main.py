@@ -166,7 +166,8 @@ if page == "Home":
                     prediction = model.predict(final_input)
                     probability = model.predict_proba(final_input)[0][1] * 100
                     result_class = "fraud" if prediction[0] == 1 else "non-fraud"
-                    result_text = "⚠️ Fraudulent Transaction" if prediction[0] == 1 else "✅ Non-Fraudulent Transaction"
+                    result_text = "⚠️ Fraudulent Transaction is predict.Be carefully" if prediction[0] == 1 else ("✅ Non-Fraudulent Transaction is predict. safe!"
+                                                                                                                  "")
                     st.markdown(f'<div class="prediction-box {result_class}">{result_text}</div>', unsafe_allow_html=True)
 
 
