@@ -3,13 +3,12 @@ import pandas as pd
 import numpy as np
 import joblib
 import datetime
+import base64
 
 # -------------------- Page Config --------------------
 st.set_page_config(page_title="Credit Card Fraud Detection", layout="wide")
 
 # -------------------- Background Image --------------------
-import base64
-
 def set_background(image_path):
     with open(image_path, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read()).decode()
@@ -28,8 +27,8 @@ def set_background(image_path):
         unsafe_allow_html=True
     )
 
-# Call this function at the top of your file
 set_background("image.jpeg")  # Make sure the image exists in the same folder
+
 # -------------------- Title --------------------
 st.title("🛡️ Credit Card Fraud Detection")
 st.markdown("""
@@ -94,52 +93,59 @@ def preprocess_input(data, ohe, feature_names):
         st.error(f"Preprocessing error: {str(e)}")
         return None
 
-# -------------------- Input Form (Single Column) --------------------
+# -------------------- Input Form --------------------
 st.header("📝 Enter Transaction Details")
 with st.form("transaction_form"):
-    trans_date = st.date_input("Transaction Date", value=datetime.date.today())
-    trans_time = st.time_input("Transaction Time", value=datetime.time(12, 0))
-    amt = st.number_input("Transaction Amount ($)", min_value=0.0, value=100.0, step=0.01)
+    trans_date = st.date_input("Select Transaction Date", value=None)
 
-    gender = st.selectbox("Gender", options=ohe.categories_[0])
-    city = st.selectbox("City", options=ohe.categories_[1])
-    state = st.selectbox("State", options=ohe.categories_[2])
-    type_of_card = st.selectbox("Type of Card", options=ohe.categories_[3])
-    day_of_week = st.selectbox("Day of Week", options=ohe.categories_[4])
-    type_of_transaction = st.selectbox("Type of Transaction", options=ohe.categories_[5])
-    category = st.selectbox("Transaction Category", options=ohe.categories_[6])
-    job = st.selectbox("Job", options=ohe.categories_[7])
+
+    trans_time = st.time_input("Select Transaction Time", value=datetime.time(12, 0))
+
+    amt = st.number_input("Transaction Amount ($)", min_value=0.0, value=0.0, step=1.0, format="%.2f")
+
+
+    gender = st.selectbox("Gender", options=["Select"] + sorted(df['gender'].dropna().unique()))
+    city = st.selectbox("City", options=["Select"] + sorted(df['city'].dropna().unique()))
+    state = st.selectbox("State", options=["Select"] + sorted(df['state'].dropna().unique()))
+    type_of_card = st.selectbox("Type of Card", options=["Select"] + sorted(df['Type of Card'].dropna().unique()))
+    day_of_week = st.selectbox("Day of Week", options=["Select"] + sorted(df['Day of Week'].dropna().unique()))
+    type_of_transaction = st.selectbox("Type of Transaction", options=["Select"] + sorted(df['Type of Transaction'].dropna().unique()))
+    category = st.selectbox("Transaction Category", options=["Select"] + sorted(df['category'].dropna().unique()))
+    job = st.selectbox("Job", options=["Select"] + sorted(df['job'].dropna().unique()))
 
     submitted = st.form_submit_button("🎯 Predict Fraud")
 
 # -------------------- Prediction --------------------
 if submitted:
-    trans_date_time = pd.to_datetime(f"{trans_date} {trans_time}")
-    input_data = {
-        'trans_date_trans_time': trans_date_time,
-        'amt': amt,
-        'Time': trans_time.hour,
-        'gender': gender,
-        'city': city,
-        'state': state,
-        'Type of Card': type_of_card,
-        'Day of Week': day_of_week,
-        'Type of Transaction': type_of_transaction,
-        'category': category,
-        'job': job
-    }
+    if "Select" in [gender, city, state, type_of_card, day_of_week, type_of_transaction, category, job]:
+        st.warning("⚠️ Please fill in all fields before submitting.")
+    else:
+        try:
+            trans_date_time = pd.to_datetime(f"{trans_date} {trans_time}")
+            input_data = {
+                'trans_date_trans_time': trans_date_time,
+                'amt': amt,
+                'Time': trans_date_time.hour,
+                'gender': gender,
+                'city': city,
+                'state': state,
+                'Type of Card': type_of_card,
+                'Day of Week': day_of_week,
+                'Type of Transaction': type_of_transaction,
+                'category': category,
+                'job': job
+            }
 
-    with st.spinner("Predicting..."):
-        final_input = preprocess_input(input_data, ohe, feature_names)
-        if final_input is not None:
-            try:
-                prediction = model.predict(final_input)
-                result_class = "fraud" if prediction[0] == 1 else "non-fraud"
-                result_text = (
-                    "⚠️ Fraudulent Transaction is predicted. Be careful!"
-                    if prediction[0] == 1 else
-                    "✅ Non-Fraudulent Transaction is predicted."
-                )
-                st.markdown(f'<div class="prediction-box {result_class}">{result_text}</div>', unsafe_allow_html=True)
-            except Exception as e:
-                st.error(f"Prediction Error: {str(e)}")
+            with st.spinner("Predicting..."):
+                final_input = preprocess_input(input_data, ohe, feature_names)
+                if final_input is not None:
+                    prediction = model.predict(final_input)
+                    result_class = "fraud" if prediction[0] == 1 else "non-fraud"
+                    result_text = (
+                        "⚠️ Fraudulent Transaction is predicted. Be careful!"
+                        if prediction[0] == 1 else
+                        "✅ Non-Fraudulent Transaction is predicted."
+                    )
+                    st.markdown(f'<div class="prediction-box {result_class}">{result_text}</div>', unsafe_allow_html=True)
+        except Exception as e:
+            st.error(f"Prediction Error: {str(e)}")
