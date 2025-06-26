@@ -229,22 +229,43 @@ elif page == "Analytics":
         st.pyplot(fig)
 
 elif page == "About":
-    st.title("ℹ️ About")
+    st.title("ℹ️ About the Project")
     st.markdown("""
-    Built by **Bismah**, a tech enthusiast from Pakistan 🇵🇰  
-    **Stack**: Streamlit, Random Forest, Pandas, Seaborn  
-    **Project**: Final Year Fraud Detection App 💻  
+    This application is developed as part of a **Final Year Project** focused on detecting fraudulent transactions using machine learning.  
+    The goal is to assist in identifying potential credit card fraud in real-time and through past transaction analysis.
     """)
+
 
 elif page == "Contact":
     st.title("📨 Contact")
     st.markdown("""
     Want to connect or collaborate?
 
-    - 📧 Email: bismah@example.com  
-    - 👩‍💻 GitHub: [your-github](https://github.com/your-profile)  
-    - 💼 LinkedIn: [your-linkedin](https://linkedin.com/in/your-profile)
+    - 📧 Email: email@example.com  
+    - 👩‍💻 GitHub: [github](https://github.com/your-profile)  
+    - 💼 LinkedIn: [linkedin](https://linkedin.com/in/your-profile)
     """)
 
 # -------------------- Footer --------------------
-st.markdown(f'<div class="footer">Made with ❤️ by Bismah | © {datetime.datetime.now().year}</div>', unsafe_allow_html=True)
+# Footer
+st.markdown(
+    f"""
+    <style>
+        .footer {{
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f0f2f6;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            color: #333;
+        }}
+    </style>
+    <div class="footer">
+        Final Year Project Team | Credit Card Fraud Detection | © {datetime.datetime.now().year}
+    </div>
+    """,
+    unsafe_allow_html=True
+)
