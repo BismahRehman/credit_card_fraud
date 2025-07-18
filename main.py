@@ -8,6 +8,72 @@ import seaborn as sns
 import base64
 from streamlit_option_menu import option_menu
 
+
+
+# -------------------- Load Model --------------------
+try:
+    model = joblib.load('random_forest_model55.pkl')
+    ohe = joblib.load('one_hot_encoder55.pkl')
+    feature_names = joblib.load('feature_names55.pkl')
+except FileNotFoundError:
+    st.error("❌ Required files not found.")
+    st.stop()
+
+
+# Initialize session state
+if "page" not in st.session_state:
+    st.session_state.page = 0
+
+
+# --- Functions ---
+def nextpage():
+    if st.session_state.username == "admin" and st.session_state.password == "123":
+        st.session_state.page = 1
+    else:
+        st.error("❌ Incorrect username or password")
+
+def restart():
+    st.session_state.page = 0
+
+# ---------- LOGOUT FUNCTION ----------
+def logout():
+    st.session_state.page = 0
+
+
+
+# --- Login Page ---
+if st.session_state.page == 0:
+    st.markdown(
+        """
+        <style>
+        div[data-testid="stVerticalBlockBorderWrapper"] {
+            width: 460px;
+            margin: 100px auto;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #007bff;
+            background-color: #f9f9f9;
+        }
+        button {
+            border-radius: 8px;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    with st.container():
+        st.markdown("### 🔐 Login Page")
+        st.text_input("**Username**", key="username")
+        st.text_input("**Password**", type="password", key="password")
+        st.button("Submit", on_click=nextpage)
+    st.stop()
+
+
 # -------------------- Set Background --------------------
 def set_background(image_path):
     with open(image_path, "rb") as img:
@@ -58,11 +124,12 @@ def set_background(image_path):
     """
     st.markdown(css, unsafe_allow_html=True)
 
-# -------------------- Page Config --------------------
+
+  # -------------------- Page Config --------------------
 st.set_page_config(page_title="Credit Card Fraud Detection", layout="wide")
 set_background("image.jpeg")
 
-# -------------------- Sidebar --------------------
+  # -------------------- Sidebar --------------------
 with st.sidebar:
     st.image("ch_prev_ui.png", use_container_width=True)
     page = option_menu("Main Menu", ["Home", "Analytics", "About", "Contact"],
@@ -70,14 +137,8 @@ with st.sidebar:
                        menu_icon="cast", default_index=0,
                        styles={"nav-link-selected": {"background-color": "green"}})
 
-# -------------------- Load Model --------------------
-try:
-    model = joblib.load('random_forest_model55.pkl')
-    ohe = joblib.load('one_hot_encoder55.pkl')
-    feature_names = joblib.load('feature_names55.pkl')
-except FileNotFoundError:
-    st.error("❌ Required files not found.")
-    st.stop()
+    st.sidebar.button("🔓 **Logout**", on_click=restart)
+
 
 # -------------------- Column Names --------------------
 categorical_cols = ['gender', 'city', 'state', 'Type of Card', 'Day of Week', 'Type of Transaction', 'category', 'job']
