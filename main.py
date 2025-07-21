@@ -276,7 +276,7 @@ elif page == "Analytics":
         labels = ['Non-Fraud', 'Fraud']
         colors = ['#4CAF50', '#FF5733']
         fig, ax = plt.subplots(figsize=(6, 6))
-        ax.pie(fraud_counts, labels=labels, autopct='%1.0f%%', colors=colors, startangle=140)
+        ax.pie(fraud_counts, labels=labels, autopct='%1.1f%%', colors=colors, startangle=140)
         ax.set_title('Fraud vs. Non-Fraud Transactions')
         st.pyplot(fig)
 
