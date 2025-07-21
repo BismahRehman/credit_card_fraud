@@ -20,59 +20,6 @@ except FileNotFoundError:
     st.stop()
 
 
-# Initialize session state
-if "page" not in st.session_state:
-    st.session_state.page = 0
-
-
-# --- Functions ---
-def nextpage():
-    if st.session_state.username == "admin" and st.session_state.password == "123":
-        st.session_state.page = 1
-    else:
-        st.error("❌ Incorrect username or password")
-
-def restart():
-    st.session_state.page = 0
-
-# ---------- LOGOUT FUNCTION ----------
-def logout():
-    st.session_state.page = 0
-
-
-
-# --- Login Page ---
-if st.session_state.page == 0:
-    st.markdown(
-        """
-        <style>
-        div[data-testid="stVerticalBlockBorderWrapper"] {
-            width: 460px;
-            margin: 100px auto;
-            padding: 30px;
-            border-radius: 10px;
-            border: 2px solid #007bff;
-            background-color: #f9f9f9;
-        }
-        button {
-            border-radius: 8px;
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            font-size: 16px;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-    with st.container():
-        st.markdown("### 🔐 Login Page")
-        st.text_input("**Username**", key="username")
-        st.text_input("**Password**", type="password", key="password")
-        st.button("Submit", on_click=nextpage)
-    st.stop()
-
 
 # -------------------- Set Background --------------------
 def set_background(image_path):
@@ -86,6 +33,9 @@ def set_background(image_path):
         background-repeat: no-repeat;
         background-attachment: fixed;
         font-family: 'Inter', sans-serif;
+         color: black; /* default text color */
+
+
     }}
     h1, h2 {{
         color: #1a3c34;
@@ -123,6 +73,65 @@ def set_background(image_path):
     </style>
     """
     st.markdown(css, unsafe_allow_html=True)
+
+
+
+
+
+# Initialize session state
+if "page" not in st.session_state:
+    st.session_state.page = 0
+
+
+# --- Functions ---
+def nextpage():
+    if st.session_state.username == "admin" and st.session_state.password == "123":
+        st.session_state.page = 1
+    else:
+        st.error("❌ Incorrect username or password")
+
+def restart():
+    st.session_state.page = 0
+
+# ---------- LOGOUT FUNCTION ----------
+def logout():
+    st.session_state.page = 0
+
+set_background("image.jpeg")
+
+
+# --- Login Page ---
+if st.session_state.page == 0:
+    st.markdown(
+        """
+        <style>
+        div[data-testid="stVerticalBlockBorderWrapper"] {
+            width: 460px;
+            margin: 100px auto;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #007bff;
+            background-color: #f9f9f9;
+        }
+        button {
+            border-radius: 8px;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    with st.container():
+        st.markdown("### 🔐 Login Page")
+        st.text_input("**Username**", key="username")
+        st.text_input("**Password**", type="password", key="password")
+        st.button("Submit", on_click=nextpage)
+    st.stop()
+
 
 
   # -------------------- Page Config --------------------
@@ -178,6 +187,10 @@ def preprocess_input(data, ohe, feature_names):
     final_input = final_input.reindex(columns=feature_names, fill_value=0)
     return final_input
 
+
+
+#st.markdown("<h1 style='color:#1e88e5; font-weight:bold;'>City</h1>", unsafe_allow_html=True)
+
 # -------------------- Pages --------------------
 if page == "Home":
     st.title("💳 Credit Card Fraud Detection")
@@ -186,6 +199,16 @@ if page == "Home":
     st.header("📝 Enter Transaction Details")
     with st.form("transaction_form"):
         col1, col2 = st.columns(2)
+
+        st.markdown("""
+            <style>
+                label {
+                    font-weight: bold ;
+                    # color: #1e88e5 ; 
+                }
+            </style>
+        """, unsafe_allow_html=True)
+
         with col1:
             trans_date = st.date_input("Transaction Date", value=None)
             trans_time = st.time_input("Transaction Time", value=None)
